@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>UG-08 CPSC 4030</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <title>NBA Player Stats</title>
     <style>
       body {
-        background-image: url('https://imgur.com/HJd3a7L');
+        background-image: url('https://i.imgur.com/HJd3a7L.jpeg');
         background-size: cover;
         background-repeat: no-repeat;
         display: flex;
@@ -15,21 +14,150 @@
         height: 100vh;
         margin: 0;
       }
-      
       h1 {
-        color: #005e23;
+        color: #f4f4f4;
         font-size: 48px;
         margin-top: 20px;
       }
       
       svg {
-        width: 300px;
-        height: 300px;
+        width: 550px;
+        height: 400px;
       }
     </style>
   </head>
   <body>
-    <h1>UG-08 CPSC 4030</h1>
-    <svg><!-- Add SVG content here --></svg>
+    <h1>NBA Player Stats</h1>
+    <h2 style="color:white;">Average Stats From 2019 To 2022 Season</h2>
+    <svg id="playerStats">
+    </svg>
+    <div>
+      <button onclick="showPlayer(0)">Luka Doncic</button>
+      <button onclick="showPlayer(1)">Donovan Mitchell</button>
+      <button onclick="showPlayer(2)">Stephen Curry</button>
+      <button onclick="showPlayer(3)">Jayson Tatum</button>
+      <button onclick="showPlayer(4)">Joel Embiid</button>
+    </div>
+    
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+      const players = [
+        {
+          name: "Luka Doncic",
+          seasons: [
+            { gp: 72, points: 33.8, rebounds: 10.4, ast: 9.4, stl: 1.0, blk: 0.6, fgm: 11.4, ftm: 10.1, tov: 4.4 },
+            { gp: 70, points: 30.8, rebounds: 9.4, ast: 8.4, stl: 0.9, blk: 0.5, fgm: 10.3, ftm: 9.2, tov: 4.1 },
+            { gp: 65, points: 29.8, rebounds: 9.0, ast: 8.2, stl: 0.8, blk: 0.4, fgm: 9.8, ftm: 8.5, tov: 4.0 },
+          ],
+        },
+        {
+          name: "Donovan Mitchell",
+          seasons: [
+            { gp: 73, points: 32.8, rebounds: 5.4, ast: 5.4, stl: 1.2, blk: 0.3, fgm: 11.2, ftm: 9.1, tov: 3.9 },
+            { gp: 71, points: 31.8, rebounds: 5.1, ast: 4.9, stl: 1.1, blk: 0.2, fgm: 10.9, ftm: 8.7, tov: 3.8 },
+            { gp: 68, points: 30.5, rebounds: 4.8, ast: 5.1, stl: 1.0, blk: 0.3, fgm: 10.3, ftm: 7.8, tov: 3.6 },
+          ],
+        },
+        {
+          name: "Stephen Curry",
+          seasons: [
+            { gp: 74, points: 30.8, rebounds: 5.7, ast: 4.3, stl: 1.4, blk: 0.2, fgm: 11.5, ftm: 9.6, tov: 3.7 },
+            { gp: 72, points: 29.6, rebounds: 5.4, ast: 4.7, stl: 1.3, blk: 0.3, fgm: 10.9, ftm: 8.8, tov: 3.5 },
+            { gp: 70, points: 31.0, rebounds: 5.8, ast: 5.0, stl: 1.6, blk: 0.4, fgm: 11.8, ftm: 9.4, tov: 3.9 },
+          ],
+        },
+        {
+          name: "Jayson Tatum",
+          seasons: [
+            { gp: 71, points: 30.2, rebounds: 9.6, ast: 3.4, stl: 1.0, blk: 0.9, fgm: 10.1, ftm: 9.5, tov: 3.6 },
+            { gp: 69, points: 29.0, rebounds: 9.1, ast: 3.5, stl: 0.9, blk: 0.8, fgm: 9.8, ftm: 8.9, tov: 3.5 },
+            { gp: 67, points: 28.7, rebounds: 9.0, ast: 3.7, stl: 0.8, blk: 0.7, fgm: 9.5, ftm: 8.6, tov: 3.8 },
+          ],
+        },
+        {
+          name: "Joel Embiid",
+          seasons: [
+            { gp: 72, points: 29.4, rebounds: 11.0, ast: 6.2, stl: 1.1, blk: 1.3, fgm: 11.0, ftm: 8.4, tov: 3.3 },
+            { gp: 70, points: 28.7, rebounds: 10.9, ast: 6.4, stl: 1.0, blk: 1.2, fgm: 10.5, ftm: 8.2, tov: 3.5 },
+            { gp: 68, points: 30.1, rebounds: 11.4, ast: 6.6, stl: 1.2, blk: 1.4, fgm: 11.5, ftm: 8.6, tov: 3.4 },
+          ],
+        },
+      ];
+
+      let currentPlayerIndex = 0;
+
+      function createPlayerStats(playerIndex) {
+        const svg = d3.select('#playerStats');
+        const barHeight = 20;
+        const barSpacing = 30;
+
+        svg.selectAll('*').remove();
+
+        const player = players[playerIndex];
+        svg.append('text')
+          .attr('x', 20)
+          .attr('y', 40)
+          .attr('font-size', 20)
+          .attr('fill', 'white')
+          .text(player.name);
+
+        const averageStats = calculateAverageStats(player);
+
+        svg.selectAll('rect')
+          .data(Object.entries(averageStats))
+          .enter()
+          .append('rect')
+          .attr('x', 100)
+          .attr('y', (d, i) => 70 + i * barSpacing)
+          .attr('width', (d) => d[1] * 5)
+          .attr('height', barHeight)
+          .attr('fill', 'white');
+
+        svg.selectAll('text.bar-label')
+          .data(Object.keys(averageStats))
+          .enter()
+          .append('text')
+          .attr('class', 'bar-label')
+          .attr('x', 95)
+          .attr('y', (d, i) => 82 + i * barSpacing)
+          .attr('text-anchor', 'end')
+          .attr('font-size', 16)
+          .attr('fill', 'white')
+          .text((d) => d);
+
+        svg.selectAll('text.bar-value')
+          .data(Object.values(averageStats))
+          .enter()
+          .append('text')
+          .attr('class', 'bar-value')
+          .attr('x', (d) => 110 + d * 5)
+          .attr('y', (d, i) => 82 + i * barSpacing)
+          .attr('font-size', 16)
+          .attr('fill', 'red')
+          .text((d) => d.toFixed(1));
+      }
+      function calculateAverageStats(player) {
+        const totalStats = player.seasons.reduce((acc, season) => {
+          for (const key in season) {
+            if (acc.hasOwnProperty(key)) {
+              acc[key] += season[key];
+            }
+          }
+          return acc;
+        }, { gp: 0, points: 0, rebounds: 0, ast: 0, stl: 0, blk: 0, fgm: 0, ftm: 0, tov: 0, eff: 0 });
+
+        const numSeasons = player.seasons.length;
+        for (const key in totalStats) {
+          totalStats[key] /= numSeasons;
+        }
+
+        return totalStats;
+      }
+      function showPlayer(playerIndex) {
+        currentPlayerIndex = playerIndex;
+        createPlayerStats(currentPlayerIndex);
+      }
+      showPlayer(currentPlayerIndex);
+    </script>
   </body>
 </html>
