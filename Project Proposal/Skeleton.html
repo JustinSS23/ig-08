@@ -53,9 +53,9 @@
         {
           name: "Donovan Mitchell",
           seasons: [
-            { GP: 73, points: 32.8, REB: 5.4, AST: 5.4, STL: 1.2, BLK: 0.3, FGM: 11.2, FTM: 9.1, TOV: 3.9 },
+            { GP: 73, points: 32.8, REB: 5.4, AST: 5.4, STL: 1.2, BLK: 0.8, FGM: 11.2, FTM: 9.1, TOV: 3.9 },
             { GP: 71, points: 31.8, REB: 5.1, AST: 4.9, STL: 1.1, BLK: 0.2, FGM: 10.9, FTM: 8.7, TOV: 3.8 },
-            { GP: 68, points: 30.5, REB: 4.8, AST: 5.1, STL: 1.0, BLK: 0.3, FGM: 10.3, FTM: 7.8, TOV: 3.6 },
+            { GP: 68, points: 30.5, REB: 4.8, AST: 5.1, STL: 1.0, BLK: 0.1 , FGM: 10.3, FTM: 7.8, TOV: 3.6 },
           ],
         },
         {
@@ -125,38 +125,50 @@
           .attr('fill', 'white')
           .text((d) => d);
 
+
         svg.selectAll('text.bar-value')
-          .data(Object.values(averageStats))
-          .enter()
-          .append('text')
-          .attr('class', 'bar-value')
-          .attr('x', (d) => 110 + d * 5)
-          .attr('y', (d, i) => 82 + i * barSpacing)
-          .attr('font-size', 16)
-          .attr('fill', 'red')
-          .text((d) => d.toFixed(1));
+        .data(Object.entries(averageStats))
+        .enter()
+        .append('text')
+        .attr('class', 'bar-value')
+        .attr('x', (d, i) => (i === 0 ? 110 + d[1] * 5 : 110 + d[1] * 5))
+        .attr('y', (d, i) => 82 + i * barSpacing)
+        .attr('font-size', 16)
+        .attr('fill', (d, i) => (i === 0 ? 'red' : 'red'))
+        .text((d, i) => d[1].toFixed(1));
       }
+
       function calculateAverageStats(player) {
-        const totalStats = player.seasons.reduce((acc, season) => {
-          for (const key in season) {
-            if (acc.hasOwnProperty(key)) {
-              acc[key] += season[key];
+        const totalStats = player.seasons.reduce(
+          (acc, season) => {
+            for (const key in season) {
+              if (acc.hasOwnProperty(key)) {
+                acc[key] += season[key];
+              }
             }
-          }
-          return acc;
-        }, { GP: 0, points: 0, REB: 0, AST: 0, STL: 0, BLK: 0, FGM: 0, FTM: 0, TOV: 0, EFF: 0 });
-
+            acc.EFF += season.points + season.REB + season.AST + season.STL + season.BLK - season.FGM - season.FTM - season.TOV;
+            return acc;
+          },
+          { GP: 0, points: 0, REB: 0, AST: 0, STL: 0, BLK: 0, FGM: 0, FTM: 0, TOV: 0, EFF: 0 }
+        );
         const numSeasons = player.seasons.length;
+        
         for (const key in totalStats) {
-          totalStats[key] /= numSeasons;
+          if (key !== 'EFF' && key !== 'GP') {
+            totalStats[key] /= numSeasons;
+          } else if (key === 'GP') {
+            totalStats.GP = totalStats.GP / numSeasons;
+          } else {
+            totalStats.EFF = totalStats.EFF / totalStats.GP;
+          }
         }
-
         return totalStats;
-      }
+    }
       function showPlayer(playerIndex) {
         currentPlayerIndex = playerIndex;
         createPlayerStats(currentPlayerIndex);
       }
+
       showPlayer(currentPlayerIndex);
     </script>
   </body>
