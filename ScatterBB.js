@@ -1,91 +1,86 @@
-d3.csv("NBA_Player_Stats.csv").then(function (dataset) {
-    console.log(dataset);
+// script.js
 
-    var dimensions = {
-        width: 800,
-        height: 800,
-        margin: {
-            top: 10,
-            bottom: 50,
-            right: 10,
-            left: 50
-        }
-    };
+// Wait for the DOM to be ready before executing the script
+document.addEventListener('DOMContentLoaded', function () {
+    const players = [];
 
-    var targetSeason = "2021-22";
+    d3.csv('NBA_Player_Stats.csv').then((data) => {
+        // Convert CSV data to the desired format
+        data.forEach((row) => {
+            const playerName = row.Player;
+            const position = row.Pos; // Add position data
+            const seasonStats = {
+                GP: +row.G,
+                points: +row.PTS,
+                REB: +row.TRB,
+                AST: +row.AST,
+                STL: +row.STL,
+                BLK: +row.BLK,
+                FGM: +row.FG,
+                FTM: +row.FT,
+                TOV: +row.TOV,
+            };
 
-    var filteredData = dataset.filter(function (d) {
-        return d.Season === targetSeason;
-    });
+            const playerIndex = players.findIndex(player => player.name === playerName);
 
-    filteredData.forEach(function (d) {
-        d['FG'] = parseInt(d['FG']);
-        d['PTS'] = parseInt(d['PTS']);
-    });
-    console.log(filteredData);
-
-    // Allows for dynamic reallocation
-    var xAccessor = function (d) {
-        return d.FG;
-    };
-    var yAccessor = function (d) {
-        return d.PTS;
-    };
-
-    var selectedPlayers = []; // Array to store selected player names
-
-    var svg = d3.select("#stackedbarchart")
-        .style("width", dimensions.width)
-        .style("height", dimensions.height);
-
-    var xScale = d3.scaleLinear()
-        .domain(d3.extent(filteredData, xAccessor))
-        .range([dimensions.margin.left, dimensions.width - dimensions.margin.right]);
-
-    var yScale = d3.scaleLinear()
-        .domain(d3.extent(filteredData, yAccessor))
-        .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top]);
-
-    var dots = svg.append("g")
-        .selectAll("circle")
-        .data(filteredData)
-        .enter()
-        .append("circle")
-        .on("mouseover", function (d) {
-            d3.select(this).attr("fill", "red");
-        })
-        .on("mouseout", function () {
-            d3.select(this).attr("fill", "black");
-        })
-        .on("click", function (d, i) {
-            // Check if the player is already selected
-            var isSelected = selectedPlayers.includes(i.Player);
-        
-            // If not selected, add to the array
-            if (!isSelected) {
-                selectedPlayers.push(i.Player);
-                d3.select(this).attr("stroke-width", "2").attr("stroke", "red");
+            if (playerIndex !== -1) {
+                players[playerIndex].seasons.push(seasonStats);
             } else {
-                // If already selected, remove from the array
-                var index = selectedPlayers.indexOf(i.Player);
-                selectedPlayers.splice(index, 1);
-                d3.select(this).attr("stroke-width", null).attr("stroke", null);
+                players.push({
+                    name: playerName,
+                    position: position, // Add position data
+                    seasons: [seasonStats],
+                });
             }
-        
-            console.log("Selected Players: ", selectedPlayers);
-        })
-        .attr("cx", d => xScale(xAccessor(d)))
-        .attr("cy", d => yScale(yAccessor(d)))
-        .attr("r", 3)
-        .attr("fill", "black");
+        });
 
-    var xAxisGen = d3.axisBottom().scale(xScale);
-    var xAxis = svg.append("g")
-        .call(xAxisGen)
-        .style("transform", `translateY(${dimensions.height - dimensions.margin.bottom}px)`);
+        const svg = d3.select('#playerStats');
+        const circleRadius = 6;
 
-    var yAxisGen = d3.axisLeft().scale(yScale);
-    var yAxis = svg.append("g")
-        .call(yAxisGen)
-        .style("transform", `translateX(${dimensions.margin.left}px)`);
+        function createScatterPlot() {
+            svg.selectAll('*').remove();
+
+            const xScale = d3.scaleLinear()
+                .domain([0, d3.max(players, d => d3.max(d.seasons, s => s.points))])
+                .range([60, 500]);
+
+            const yScale = d3.scaleLinear()
+                .domain([0, d3.max(players, d => d3.max(d.seasons, s => s.GP))])
+                .range([350, 60]);
+
+            svg.selectAll('circle')
+                .data(players)
+                .enter()
+                .append('circle')
+                .attr('cx', d => xScale(d3.max(d.seasons, s => s.points)))
+                .attr('cy', d => yScale(d3.max(d.seasons, s => s.GP)))
+                .attr('r', circleRadius)
+                .attr('fill', 'black')
+                .attr('stroke', 'white')
+                .on('mouseover', function (event, d) {
+                    d3.select(this).attr('fill', 'orange');
+                    showTooltip(event, d);
+                })
+                .on('mouseout', function () {
+                    d3.select(this).attr('fill', 'black');
+                    hideTooltip();
+                });
+
+            function showTooltip(event, player) {
+                const tooltip = d3.select('body').append('div')
+                    .attr('class', 'tooltip')
+                    .style('top', event.clientY - 30 + 'px')  // Adjust tooltip position
+                    .style('left', event.clientX + 10 + 'px');
+                tooltip.append('div')
+                    .attr('class', 'tooltiptext')
+                    .html(`${player.name}: ${d3.max(player.seasons, s => s.points)} points`);
+            }
+
+            function hideTooltip() {
+                svg.selectAll('.tooltip').remove();
+            }
+        }
+
+        createScatterPlot();
+    });
 });
