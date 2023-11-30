@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>NBA Player Stats</title>
+    <style>
+        body {
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: white;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-top: 20px;
+        }
+
+        svg {
+            width: 550px;
+            height: 400px;
+            background-color: purple;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted white;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 150px;
+            background-color: black;
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+            top: -30px;
+            left: 10px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>NBA Players 2021-22</h1>
+    <svg id="playerStats"></svg>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="ScatterBB.js"></script>
+    <script>
+        const players = [];
+
+        d3.csv('NBA_Player_Stats.csv').then((data) => {
+            data.forEach((row) => {
+                const playerName = row.Player;
+                const position = row.Pos;
+                const seasonStats = {
+                    GP: +row.G,
+                    points: +row.PTS,
+                    REB: +row.TRB,
+                    AST: +row.AST,
+                    STL: +row.STL,
+                    BLK: +row.BLK,
+                    FGM: +row.FG,
+                    FTM: +row.FT,
+                    TOV: +row.TOV,
+                };
+
+                const playerIndex = players.findIndex(player => player.name === playerName);
+
+                if (playerIndex !== -1) {
+                    players[playerIndex].seasons.push(seasonStats);
+                } else {
+                    players.push({
+                        name: playerName,
+                        position: position,
+                        seasons: [seasonStats],
+                    });
+                }
+            });
+
+            createScatterPlot(players);
+        });
+    </script>
+</body>
+
+</html>
