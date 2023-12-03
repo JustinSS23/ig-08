@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Load default data for the initial season (e.g., 2021-2022)
-    loadData('data.csv');
+    loadData('21-22.csv');
 
     // Dynamically set up event listeners for season buttons
     const seasonButtons = document.querySelectorAll('button[data-csv]');
