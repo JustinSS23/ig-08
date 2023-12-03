@@ -1,99 +1,45 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>NBA Player Stats</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Players Points</title>
+    <link rel="stylesheet" href="styles.css">
+    
     <style>
         body {
-            background-color: black;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            color: white;
+            text-align: center;
         }
 
         h1 {
-            font-size: 48px;
-            margin-top: 20px;
+            margin: 0;
+            padding: 20px;
         }
 
-        svg {
-            width: 550px;
-            height: 400px;
-            background-color: purple;
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            border-bottom: 1px dotted white;
-        }
-
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 150px;
-            background-color: black;
-            color: white;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px 0;
-            /* Position the tooltip */
-            position: absolute;
-            z-index: 1;
-            top: -30px;
-            left: 10px;
-        }
-
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
+        #chartContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            width: 620px;
+            margin: auto;
         }
     </style>
 </head>
-
 <body>
-    <h1>NBA Players 2021-22</h1>
-    <svg id="playerStats"></svg>
+    <h1>Top NBA Players</h1>
+    <div>
+        <button data-csv="21-22.csv">2021-2022 Season</button>
+        <button data-csv="20-21.csv">2020-2021 Season</button>
+        <button data-csv="19-20.csv">2019-2020 Season</button>
+        <button data-csv="18-19.csv">2018-2019 Season</button>
+    </div>
+    <div id="chartContainer">
+        <canvas id="barChart"></canvas>
+        <canvas id="scatterChart"></canvas>
+        <canvas id="perHistogram"></canvas>
+    </div>
 
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="ScatterBB.js"></script>
-    <script>
-        const players = [];
-
-        d3.csv('NBA_Player_Stats.csv').then((data) => {
-            data.forEach((row) => {
-                const playerName = row.Player;
-                const position = row.Pos;
-                const seasonStats = {
-                    GP: +row.G,
-                    points: +row.PTS,
-                    REB: +row.TRB,
-                    AST: +row.AST,
-                    STL: +row.STL,
-                    BLK: +row.BLK,
-                    FGM: +row.FG,
-                    FTM: +row.FT,
-                    TOV: +row.TOV,
-                };
-
-                const playerIndex = players.findIndex(player => player.name === playerName);
-
-                if (playerIndex !== -1) {
-                    players[playerIndex].seasons.push(seasonStats);
-                } else {
-                    players.push({
-                        name: playerName,
-                        position: position,
-                        seasons: [seasonStats],
-                    });
-                }
-            });
-
-            createScatterPlot(players);
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
 </body>
-
 </html>
