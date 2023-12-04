@@ -1,3 +1,3 @@
-Group 8 CPSC 4030 NBA Data Visualization
-
-Github pages hosted at: https://JustinSS23.github.io
+CPSC 4030: Group 8
+NBA Player Statistics
+https://justinss23.github.io/ug-08/
