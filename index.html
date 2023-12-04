@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NBA Players Points</title>
+    <title>NBA Players Statistics</title>
     <link rel="stylesheet" href="styles.css">
-    
+
     <style>
         body {
             text-align: center;
@@ -20,13 +20,19 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: space-around;
-            width: 620px;
+            max-width: 900px;
             margin: auto;
+        }
+
+        canvas {
+            max-width: 400px;
+            width: 100%;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Top NBA Players</h1>
+    <h1>25-Top NBA Players Per-Season</h1>
     <div>
         <button data-csv="21-22.csv">2021-2022 Season</button>
         <button data-csv="20-21.csv">2020-2021 Season</button>
@@ -34,9 +40,11 @@
         <button data-csv="18-19.csv">2018-2019 Season</button>
     </div>
     <div id="chartContainer">
-        <canvas id="barChart"></canvas>
-        <canvas id="scatterChart"></canvas>
-        <canvas id="perHistogram"></canvas>
+        <canvas id="points-chart"></canvas>
+        <canvas id="AST/TOV-chart"></canvas>
+        <canvas id="overall-chart"></canvas>
+        <canvas id="fg-chart"></canvas>
+        <canvas id="points-per-chart"></canvas>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
