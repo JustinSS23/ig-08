@@ -75,11 +75,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 scales: {
                     y: {
                         beginAtZero: true
+                    },
+                    x: {
+                        ticks: {
+                            autoSkip: false // Prevent auto-skipping of labels on x-axis
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            fontSize: 1 // Adjust font size for legend
+                        }
                     }
                 }
             }
         });
     }
+
 
     // Function to update Scatter Plot for AST/TOV Ratio
     function updateASTTOVChart(labels, data) {
@@ -127,10 +140,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 scales: {
                     y: {
                         beginAtZero: true,
-                        stepSize: 1
+                    },
+                    x: {
+                        ticks: {
+                            autoSkip: false
+                        }
                     }
-                }
-            }
+                },
+            },
         });
     }
 
