@@ -72,24 +72,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 }]
             },
             options: {
+                indexAxis: 'y',
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            autoSkip: false,
+                        }
                     },
                     x: {
                         ticks: {
-                            autoSkip: false // Prevent auto-skipping of labels on x-axis
+                            autoSkip: false,
                         }
                     }
                 },
-                plugins: {
-                    legend: {
-                        labels: {
-                            fontSize: 1 // Adjust font size for legend
-                        }
-                    }
-                }
-            }
+            },
         });
     }
 
@@ -137,13 +134,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 }]
             },
             options: {
+                indexAxis: 'y',
                 scales: {
                     y: {
                         beginAtZero: true,
+                        ticks: {
+                            autoSkip: false,
+                        }
                     },
                     x: {
                         ticks: {
-                            autoSkip: false
+                            autoSkip: false,
                         }
                     }
                 },
