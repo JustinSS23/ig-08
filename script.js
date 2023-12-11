@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 const playerNames = playerData.map(entry => entry.split(',')[0]);
                 const playerPoints = playerData.map(entry => parseFloat(entry.split(',')[3]));
                 const playerASTTOV = playerData.map(entry => parseFloat(entry.split(',')[22]));
+                const playerAST = playerData.map(entry => parseFloat(entry.split(',')[16]));
+                const playerTOV = playerData.map(entry => parseFloat(entry.split(',')[19]));
                 const playerPER = playerData.map(entry => parseFloat(entry.split(',')[21])).filter(val => !isNaN(val));
                 const playerFGPercentage = playerData.map(entry => parseFloat(entry.split(',')[5]));
 
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Call functions to update charts based on loaded data
                 updatePointsChart(playerNames, playerPoints);
-                updateASTTOVChart(playerNames, playerASTTOV);
+                updateASTTOVChart(playerNames, playerAST, playerTOV);
                 updatePerChart(playerNames, playerPER);
                 updateFGChart(playerNames, playerFGPercentage);
                 updatePointsPERChart(playerNames, playerPoints, playerPER);
@@ -92,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // Function to update Scatter Plot for AST/TOV Ratio
-    function updateASTTOVChart(labels, data) {
+    function updateASTTOVChart(labels, astData, tovData) {
         const astTovCtx = document.getElementById('AST/TOV-chart').getContext('2d');
         asttovChart = new Chart(astTovCtx, {
             type: 'scatter',
@@ -100,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 labels: labels,
                 datasets: [{
                     label: 'AST/TOV',
-                    data: data.map((asttov, index) => ({ x: index, y: asttov })),
+                    data: labels.map((label, index) => ({ x: astData[index], y: tovData[index] })),
                     backgroundColor: 'rgba(255, 99, 132, 1)',
                     borderWidth: 1
                 }]
@@ -109,10 +111,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 scales: {
                     x: {
                         type: 'linear',
-                        position: 'bottom'
+                        position: 'bottom',
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'AST' // Label for x-axis (now AST)
+                        }
                     },
                     y: {
-                        beginAtZero: true
+                        type: 'linear',
+                        position: 'left',
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'TOV' // Label for y-axis (now TOV)
+                        }
                     }
                 }
             }
@@ -154,31 +165,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to update Scatter Plot for Field Goals Made
     function updateFGChart(labels, data) {
-    const fgCtx = document.getElementById('fg-chart').getContext('2d');
-    fgChart = new Chart(fgCtx, {
-        type: 'scatter',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Field Goals Made',
-                data: data.map((fg, index) => ({ x: index, y: fg })),
-                backgroundColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    type: 'linear',
-                    position: 'bottom'
-                },
-                y: {
-                    beginAtZero: true
+        const fgCtx = document.getElementById('fg-chart').getContext('2d');
+        fgChart = new Chart(fgCtx, {
+            type: 'scatter',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Field Goals Made',
+                    data: data.map((fg, index) => ({ x: labels[index], y: fg })),
+                    backgroundColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'category', // Use 'category' type for player names
+                        labels: labels,   // Provide the player names directly
+                        position: 'bottom'
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
-    });
-}
+        });
+    }
 
 
     // Function to update Scatter Plot for Points vs. Player Efficiency Rating (PER)
