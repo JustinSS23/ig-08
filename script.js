@@ -165,32 +165,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to update Scatter Plot for Field Goals Made
     function updateFGChart(labels, data) {
-        const fgCtx = document.getElementById('fg-chart').getContext('2d');
-        fgChart = new Chart(fgCtx, {
-            type: 'scatter',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Field Goals Made',
-                    data: data.map((fg, index) => ({ x: labels[index], y: fg })),
-                    backgroundColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        type: 'category', // Use 'category' type for player names
-                        labels: labels,   // Provide the player names directly
-                        position: 'bottom'
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
+    const fgCtx = document.getElementById('fg-chart').getContext('2d');
+    fgChart = new Chart(fgCtx, {
+        type: 'scatter',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Field Goals Made',
+                data: data.map((fg, index) => ({ x: index, y: fg })),
+                backgroundColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom'
+                },
+                y: {
+                    beginAtZero: true
                 }
             }
-        });
-    }
+        }
+    });
+}
 
 
     // Function to update Scatter Plot for Points vs. Player Efficiency Rating (PER)
