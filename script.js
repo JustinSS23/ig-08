@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         position: 'bottom',
                         scaleLabel: {
                             display: true,
-                            labelString: 'AST' // Label for x-axis (now AST)
+                            labelString: 'AST' 
                         }
                     },
                     y: {
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         position: 'left',
                         scaleLabel: {
                             display: true,
-                            labelString: 'TOV' // Label for y-axis (now TOV)
+                            labelString: 'TOV' 
                         }
                     }
                 }
@@ -179,9 +179,10 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             options: {
                 scales: {
+                    //provide player names
                     x: {
-                        type: 'category', // Use 'category' type for player names
-                        labels: labels,   // Provide the player names directly
+                        type: 'category', 
+                        labels: labels,   
                         position: 'bottom'
                     },
                     y: {
