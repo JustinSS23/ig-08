@@ -26,9 +26,27 @@
 
         canvas {
             max-width: 400px;
-            max-height:350px;
+            max-height: 350px;
             width: 100%;
             margin-bottom: 20px;
+        }
+
+        #video-container {
+            margin-top: 20px;
+        }
+
+        #youtube-video {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        #video-button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -48,7 +66,19 @@
         <canvas id="points-per-chart"></canvas>
     </div>
 
+    <div id="video-container">
+        <iframe id="youtube-video" src="https://www.youtube.com/embed/ZJJZnb6b0T4" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <button id="video-button" onclick="openVideoPage()">Open Video in New Page</button>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
+
+    <script>
+        function openVideoPage() {
+            window.open("https://www.youtube.com/embed/ZJJZnb6b0T4", "_blank");
+        }
+    </script>
 </body>
 </html>
