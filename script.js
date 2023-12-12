@@ -187,10 +187,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     y: {
                         beginAtZero: true
                     }
-                }
             }
-        });
-    }
+        }
+    });
+}
 
 
     // Function to update Scatter Plot for Points vs. Player Efficiency Rating (PER)
